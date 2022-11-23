@@ -3,7 +3,7 @@ module github.com/caeret/logging
 go 1.19
 
 require (
-	go.uber.org/zap v1.23.0
+	github.com/caeret/zap v0.0.0-20221123150832-498451b361bc
 	gopkg.in/natefinch/lumberjack.v2 v2.0.0
 )
 
@@ -13,5 +13,3 @@ require (
 	go.uber.org/multierr v1.6.0 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 )
-
-replace go.uber.org/zap => github.com/caeret/zap v0.0.0-20220910091553-975ef1636a9a
