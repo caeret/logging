@@ -3,32 +3,41 @@ package logging
 import (
 	"context"
 	"os"
+	"sync/atomic"
 
 	"github.com/caeret/zap"
 	"github.com/caeret/zap/zapcore"
 	lumberjack "gopkg.in/natefinch/lumberjack.v2"
 )
 
-var global = defaultLogger().Skip(1)
+var defaultLogger atomic.Value
+
+func init() {
+	defaultLogger.Store(NewDefault().Skip(1))
+}
+
+func Default() Logger {
+	return defaultLogger.Load().(Logger)
+}
 
 func Debug(message string, fields ...interface{}) {
-	global.Debug(message, fields...)
+	Default().Debug(message, fields...)
 }
 
 func Info(message string, fields ...interface{}) {
-	global.Info(message, fields...)
+	Default().Info(message, fields...)
 }
 
 func Warn(message string, fields ...interface{}) {
-	global.Warn(message, fields...)
+	Default().Warn(message, fields...)
 }
 
 func Error(message string, fields ...interface{}) {
-	global.Error(message, fields...)
+	Default().Error(message, fields...)
 }
 
 func SetLogger(logger Logger) {
-	global = logger.Skip(1)
+	defaultLogger.Store(logger.Skip(1))
 }
 
 type Config struct {
@@ -51,7 +60,7 @@ func NewLoggerLevel(conf Config) zap.AtomicLevel {
 	return zap.NewAtomicLevelAt(conf.Level)
 }
 
-func defaultLogger() Logger {
+func NewDefault() Logger {
 	encodeConf := zap.NewProductionEncoderConfig()
 	encodeConf.EncodeTime = zapcore.ISO8601TimeEncoder
 	encodeConf.TimeKey = "time"
