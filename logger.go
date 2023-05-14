@@ -41,18 +41,17 @@ func SetLogger(logger Logger) {
 }
 
 type Config struct {
-	Level zapcore.Level
-	Path  string
+	Level  zapcore.Level
+	Path   string
+	MaxAge int
 }
 
 func NewRotator(conf Config) *lumberjack.Logger {
 	return &lumberjack.Logger{
-		Filename:   conf.Path,
-		MaxSize:    10,
-		MaxBackups: 5,
-		MaxAge:     30,
-		Compress:   false,
-		LocalTime:  true,
+		Filename:  conf.Path,
+		Compress:  false,
+		LocalTime: true,
+		MaxAge:    conf.MaxAge,
 	}
 }
 
