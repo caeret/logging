@@ -44,7 +44,7 @@ func SetCtx(ctx context.Context, pairs ...interface{}) context.Context {
 		case fmt.Stringer:
 			key = k.String()
 		default:
-			panic("invalid api code data")
+			panic("invalid pairs")
 		}
 		m[key] = pairs[i+1]
 	}
