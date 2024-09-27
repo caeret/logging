@@ -36,6 +36,10 @@ func Error(message string, fields ...interface{}) {
 	Default().Error(message, fields...)
 }
 
+func With(fields ...interface{}) Logger {
+	return Default().With(fields...)
+}
+
 func SetLogger(logger Logger) {
 	defaultLogger.Store(logger.Skip(1))
 }
