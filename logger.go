@@ -80,6 +80,7 @@ func New(logger *lumberjack.Logger, level zap.AtomicLevel) Logger {
 	encodeConf.TimeKey = "time"
 	consoleConf := encodeConf
 	consoleConf.EncodeLevel = zapcore.CapitalColorLevelEncoder
+	consoleConf.ConsoleSeparator = "  "
 	core := zapcore.NewTee(
 		zapcore.NewCore(zapcore.NewJSONEncoder(encodeConf), zapcore.AddSync(logger), level),
 		zapcore.NewCore(zapcore.NewConsoleEncoder(consoleConf), zapcore.AddSync(os.Stdout), level),
