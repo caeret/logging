@@ -20,18 +20,6 @@ func (n nopLogger) Warn(message string, fields ...interface{}) {
 func (n nopLogger) Error(message string, fields ...interface{}) {
 }
 
-func (n nopLogger) Skip(i int) Logger {
-	return n
-}
-
-func (n nopLogger) WithCallerPKG(s string) Logger {
-	return n
-}
-
-func (n nopLogger) WithSkipPKG(s ...string) Logger {
-	return n
-}
-
 func (n nopLogger) With(fields ...interface{}) Logger {
 	return n
 }

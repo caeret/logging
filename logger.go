@@ -13,7 +13,7 @@ import (
 var defaultLogger atomic.Value
 
 func init() {
-	defaultLogger.Store(NewDefault().Skip(1))
+	defaultLogger.Store(NewDefault())
 }
 
 func Default() Logger {
@@ -41,7 +41,7 @@ func With(fields ...interface{}) Logger {
 }
 
 func SetLogger(logger Logger) {
-	defaultLogger.Store(logger.Skip(1))
+	defaultLogger.Store(logger)
 }
 
 type Config struct {
@@ -74,7 +74,7 @@ func NewDefault() Logger {
 	}
 }
 
-func New(logger *lumberjack.Logger, level zap.AtomicLevel) Logger {
+func New(logger *lumberjack.Logger, level zap.AtomicLevel, callerPKG string, skipPKG ...string) Logger {
 	encodeConf := zap.NewProductionEncoderConfig()
 	encodeConf.EncodeTime = zapcore.ISO8601TimeEncoder
 	encodeConf.TimeKey = "time"
@@ -87,7 +87,7 @@ func New(logger *lumberjack.Logger, level zap.AtomicLevel) Logger {
 	)
 
 	return &ZapLogger{
-		logger: zap.New(core, zap.WithCaller(true), zap.AddCallerSkip(1)).Sugar(),
+		logger: zap.New(core, zap.WithCaller(true), zap.AddCallerSkip(1), zap.WithCallerPKG(callerPKG), zap.WithSkipPKG(skipPKG...)).Sugar(),
 	}
 }
 
@@ -96,9 +96,6 @@ type Logger interface {
 	Info(message string, fields ...interface{})
 	Warn(message string, fields ...interface{})
 	Error(message string, fields ...interface{})
-	Skip(int) Logger
-	WithCallerPKG(string) Logger
-	WithSkipPKG(...string) Logger
 	With(fields ...interface{}) Logger
 	WithCtx(ctx context.Context) Logger
 	Sync() error
@@ -122,18 +119,6 @@ func (l *ZapLogger) Warn(message string, fields ...interface{}) {
 
 func (l *ZapLogger) Error(message string, fields ...interface{}) {
 	l.logger.Errorw(message, fields...)
-}
-
-func (l *ZapLogger) Skip(n int) Logger {
-	return &ZapLogger{logger: l.logger.Desugar().WithOptions(zap.AddCallerSkip(n)).Sugar()}
-}
-
-func (l *ZapLogger) WithCallerPKG(pkg string) Logger {
-	return &ZapLogger{logger: l.logger.Desugar().WithOptions(zap.WithCallerPKG(pkg)).Sugar()}
-}
-
-func (l *ZapLogger) WithSkipPKG(pkg ...string) Logger {
-	return &ZapLogger{logger: l.logger.Desugar().WithOptions(zap.WithSkipPKG(pkg...)).Sugar()}
 }
 
 func (l *ZapLogger) With(fields ...interface{}) Logger {
