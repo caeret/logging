@@ -99,6 +99,7 @@ type Logger interface {
 	With(fields ...interface{}) Logger
 	WithCtx(ctx context.Context) Logger
 	Sync() error
+	Zap() *zap.Logger
 }
 
 type ZapLogger struct {
