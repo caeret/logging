@@ -128,3 +128,7 @@ func (l *ZapLogger) With(fields ...interface{}) Logger {
 func (l *ZapLogger) Sync() error {
 	return l.logger.Sync()
 }
+
+func (l *ZapLogger) Zap() *zap.Logger {
+	return l.logger.Desugar()
+}
