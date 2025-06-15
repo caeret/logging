@@ -5,8 +5,8 @@ import (
 	"os"
 	"sync/atomic"
 
-	"github.com/caeret/zap"
-	"github.com/caeret/zap/zapcore"
+	"go.uber.org/zap"
+	"go.uber.org/zap/zapcore"
 	lumberjack "gopkg.in/natefinch/lumberjack.v2"
 )
 
@@ -74,7 +74,7 @@ func NewDefault() Logger {
 	}
 }
 
-func New(logger *lumberjack.Logger, level zap.AtomicLevel, callerPKG string, skipPKG ...string) Logger {
+func New(logger *lumberjack.Logger, level zap.AtomicLevel, opts ...zap.Option) Logger {
 	encodeConf := zap.NewProductionEncoderConfig()
 	encodeConf.EncodeTime = zapcore.ISO8601TimeEncoder
 	encodeConf.TimeKey = "time"
@@ -87,7 +87,7 @@ func New(logger *lumberjack.Logger, level zap.AtomicLevel, callerPKG string, ski
 	)
 
 	return &ZapLogger{
-		logger: zap.New(core, zap.WithCaller(true), zap.AddCallerSkip(1), zap.WithCallerPKG(callerPKG), zap.WithSkipPKG(skipPKG...)).Sugar(),
+		logger: zap.New(core, append([]zap.Option{zap.WithCaller(true), zap.AddCallerSkip(1)}, opts...)...).Sugar(),
 	}
 }
 
