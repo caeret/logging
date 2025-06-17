@@ -2,8 +2,6 @@ package logging
 
 import (
 	"context"
-
-	"go.uber.org/zap"
 )
 
 var _ Logger = (*nopLogger)(nil)
@@ -34,8 +32,4 @@ func (n nopLogger) WithCtx(ctx context.Context) Logger {
 
 func (n nopLogger) Sync() error {
 	return nil
-}
-
-func (n nopLogger) Zap() *zap.Logger {
-	return zap.NewNop()
 }

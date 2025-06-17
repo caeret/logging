@@ -15,7 +15,7 @@ const (
 	contextKeyLogging = "logging_context"
 )
 
-func (l *ZapLogger) WithCtx(ctx context.Context) Logger {
+func WithCtx(ctx context.Context, logger Logger) Logger {
 	var args []interface{}
 	if v := ctx.Value(ctxKey{contextKeyLogging}); v != nil {
 		for k, v := range v.(map[string]interface{}) {
@@ -23,9 +23,9 @@ func (l *ZapLogger) WithCtx(ctx context.Context) Logger {
 		}
 	}
 	if len(args) > 0 {
-		return l.With(args...)
+		return logger.With(args...)
 	}
-	return l
+	return logger
 }
 
 func SetCtx(ctx context.Context, pairs ...interface{}) context.Context {
