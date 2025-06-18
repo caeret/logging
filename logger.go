@@ -8,15 +8,19 @@ import (
 var defaultLogger atomic.Value
 
 func init() {
-	defaultLogger.Store(Nop)
+	defaultLogger.Store(&wrapper{Nop})
 }
 
 func SetDefault(logger Logger) {
-	defaultLogger.Store(logger)
+	defaultLogger.Store(&wrapper{logger})
 }
 
 func Default() Logger {
-	return defaultLogger.Load().(Logger)
+	return defaultLogger.Load().(*wrapper).Logger
+}
+
+type wrapper struct {
+	Logger
 }
 
 func Debug(message string, fields ...interface{}) {
